@@ -33,11 +33,14 @@ const GRAPHICS: &Graphics = include_aseprite!("gfx/player.aseprite");
 const GRAPHICS_TABLE: &Graphics = include_aseprite!("gfx/table.aseprite");
 const TEXT_BUBBLE: &Graphics = include_aseprite!("gfx/text.aseprite");
 const NPC: &Graphics = include_aseprite!("gfx/npc.aseprite");
+const OBJECTS: &Graphics = include_aseprite!("gfx/objects.aseprite");
 
 const PLAYER: &Tag = GRAPHICS.tags().get("Player");
 const TABLE_CORNER: &Tag = GRAPHICS_TABLE.tags().get("Table Corner");
 const TABLE_TOP: &Tag = GRAPHICS_TABLE.tags().get("Table Top");
 const TEXT: &Tag = TEXT_BUBBLE.tags().get("Text");
+const BODEN: &Tag = OBJECTS.tags().get("Boden");
+const WOOD: &Tag = OBJECTS.tags().get("wood I think");
 const TEXT_MIDDLE: &Tag = TEXT_BUBBLE.tags().get("Text Mid");
 const TABLE_Y: u16 = 96;
 const NPC_PLAYER: &Tag = NPC.tags().get("npc player");
@@ -87,6 +90,13 @@ fn main(mut gba: agb::Gba) -> ! {
     let (gfx, mut vram) = gba.display.video.tiled0();
 
     let object = gba.display.object.get_managed();
+    let mut boden = object.object_sprite(BODEN.sprite(0));
+    let mut wood_01 = object.object_sprite(WOOD.sprite(0));
+    let mut wood_02 = object.object_sprite(WOOD.sprite(0));
+    let mut wood_03 = object.object_sprite(WOOD.sprite(0));
+    let mut wood_04 = object.object_sprite(WOOD.sprite(0));
+    let mut wood_05 = object.object_sprite(WOOD.sprite(0));
+    let mut wood_06 = object.object_sprite(WOOD.sprite(0));
     let mut table_corner_right = object.object_sprite(TABLE_CORNER.sprite(0));
     let mut table_corner_left = object.object_sprite(TABLE_CORNER.sprite(0));
     let mut table_top = object.object_sprite(TABLE_TOP.sprite(0));
@@ -96,6 +106,12 @@ fn main(mut gba: agb::Gba) -> ! {
     let mut npc_player = object.object_sprite(NPC_PLAYER.sprite(0));
     let mut player = object.object_sprite(PLAYER.sprite(0));
 
+    boden.set_x(192).set_y(100).show();
+    wood_01.set_x(188).set_y(45).show();
+    wood_02.set_x(124).set_y(64).set_hflip(true).show();
+    wood_03.set_x(60).set_y(64).show();
+    wood_04.set_x(188).set_y(0).show();
+    wood_05.set_x(0).set_y(64).show();
     table_corner_right
         .set_x(0)
         .set_y(TABLE_Y)
@@ -119,6 +135,24 @@ fn main(mut gba: agb::Gba) -> ! {
         agb::display::tiled::RegularBackgroundSize::Background32x32,
         agb::display::tiled::TileFormat::FourBpp,
     );
+
+    let background_tile = vram.new_dynamic_tile().fill_with(2);
+
+    for y in 0..20u16 {
+        for x in 0..30u16 {
+            bg.set_tile(
+                &mut vram,
+                (x, y).into(),
+                &background_tile.tile_set(),
+                agb::display::tiled::TileSetting::from_raw(background_tile.tile_index()),
+            );
+        }
+    }
+
+    vram.remove_dynamic_tile(background_tile);
+
+    bg.commit(&mut vram);
+    bg.show();
 
     let vblank = agb::interrupt::VBlank::get();
 
