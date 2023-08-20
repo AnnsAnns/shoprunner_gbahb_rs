@@ -106,7 +106,7 @@ fn main(mut gba: agb::Gba) -> ! {
     let mut npc_player = object.object_sprite(NPC_PLAYER.sprite(0));
     let mut player = object.object_sprite(PLAYER.sprite(0));
 
-    boden.set_x(192).set_y(100).show();
+    boden.set_x(192).set_y(109).show();
     wood_01.set_x(188).set_y(45).show();
     wood_02.set_x(124).set_y(64).set_hflip(true).show();
     wood_03.set_x(60).set_y(64).show();
