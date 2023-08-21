@@ -36,6 +36,9 @@ const NPC: &Graphics = include_aseprite!("gfx/npc.aseprite");
 const OBJECTS: &Graphics = include_aseprite!("gfx/objects.aseprite");
 
 const PLAYER: &Tag = GRAPHICS.tags().get("Player");
+const WINDOW_TOP: &Tag = OBJECTS.tags().get("Window Top");
+const WINDOW_BOTTOM: &Tag = OBJECTS.tags().get("Window Bottom");
+const WINDOW_FILLER: &Tag = OBJECTS.tags().get("Window Filler");
 const TABLE_CORNER: &Tag = GRAPHICS_TABLE.tags().get("Table Corner");
 const TABLE_TOP: &Tag = GRAPHICS_TABLE.tags().get("Table Top");
 const TEXT: &Tag = TEXT_BUBBLE.tags().get("Text");
@@ -97,14 +100,16 @@ fn main(mut gba: agb::Gba) -> ! {
     let mut wood_04 = object.object_sprite(WOOD.sprite(0));
     let mut wood_05 = object.object_sprite(WOOD.sprite(0));
     let mut wood_06 = object.object_sprite(WOOD.sprite(0));
+    let mut window_top = object.object_sprite(WINDOW_TOP.sprite(0));
+    let mut window_bottom = object.object_sprite(WINDOW_BOTTOM.sprite(0));
     let mut table_corner_right = object.object_sprite(TABLE_CORNER.sprite(0));
+    let mut window_filler = object.object_sprite(WINDOW_FILLER.sprite(0));
     let mut table_corner_left = object.object_sprite(TABLE_CORNER.sprite(0));
     let mut table_top = object.object_sprite(TABLE_TOP.sprite(0));
     let mut bubble_right = object.object_sprite(TEXT.sprite(0));
     let mut bubble_middle = object.object_sprite(TEXT_MIDDLE.sprite(0));
     let mut bubble_left = object.object_sprite(TEXT.sprite(0));
     let mut npc_player = object.object_sprite(NPC_PLAYER.sprite(0));
-    let mut player = object.object_sprite(PLAYER.sprite(0));
 
     boden.set_x(192).set_y(109).show();
     wood_01.set_x(188).set_y(45).show();
@@ -112,6 +117,7 @@ fn main(mut gba: agb::Gba) -> ! {
     wood_03.set_x(60).set_y(64).show();
     wood_04.set_x(188).set_y(0).show();
     wood_05.set_x(0).set_y(64).show();
+    wood_06.set_x(170).set_y(0).show();
     table_corner_right
         .set_x(0)
         .set_y(TABLE_Y)
@@ -119,11 +125,13 @@ fn main(mut gba: agb::Gba) -> ! {
         .show();
     table_top.set_x(64).set_y(TABLE_Y).show();
     table_corner_left.set_x(64 * 2).set_y(TABLE_Y).show();
-    bubble_right.set_x(128).set_y(0).set_hflip(true).show();
+    bubble_right.set_x(110).set_y(0).set_hflip(true).show();
     bubble_middle.set_x(64).set_y(0).show();
     bubble_left.set_x(0).set_y(0).show();
     npc_player.set_x(128).set_y(32).show();
-    player.set_x(50).set_y(50).show();
+    window_filler.set_x(176).set_y(0).show();
+    window_top.set_x(176).set_y(10).show();
+    window_bottom.set_x(176).set_y(45).show();
 
     vram.set_background_palette_raw(&[
         0x0000, 0x0A2A, 0xFFFF, 0x0000, 0xf0f0, 0x0f0f, 0xaaaa, 0x5555, 0x6666, 0x0000, 0x0000,
@@ -175,9 +183,6 @@ fn main(mut gba: agb::Gba) -> ! {
         // buttons are being pressed
         x_velocity = input.x_tri() as i32;
         y_velocity = input.y_tri() as i32;
-
-        // Set the position of the ball to match our new calculated position
-        player.set_x(player_x as u16).set_y(player_y as u16);
 
         if input.is_just_pressed(Button::A) && text_line < TEXT_LINES.len() {
             let background_tile = vram.new_dynamic_tile().fill_with(2);
